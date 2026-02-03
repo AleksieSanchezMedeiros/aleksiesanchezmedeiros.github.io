@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>VR Casino Prototype</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script>
+      // Logic to handle video transitions
+      AFRAME.registerComponent('casino-logic', {
+        init: function () {
+          const sky = document.querySelector('#main-video');
+          const betBtn = document.querySelector('#bet-button');
+
+          betBtn.addEventListener('click', () => {
+            // 1. Play "Initial Bet" video 
+            this.playVideo('#vid_bet');
+
+            // 2. When "Bet" video ends, show cards
+            document.querySelector('#vid_bet').onended = () => {
+              this.playVideo('#vid_show_cards');
+            };
+
+            // 3. When "Show Cards" ends, pick a random outcome
+            document.querySelector('#vid_show_cards').onended = () => {
+              const outcomes = ['#vid_win', '#vid_lose'];
+              const randomResult = outcomes[Math.floor(Math.random() * outcomes.length)];
+              this.playVideo(randomResult);
+            };
+          });
+        },
+        playVideo: function(id) {
+          const sky = document.querySelector('#main-video');
+          const videoAsset = document.querySelector(id);
+          sky.setAttribute('src', id);
+          videoAsset.play();
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene casino-logic>
+      <a-assets>
+        <video id="vid_begin" src="init.mp4" loop="true" crossorigin="anonymous"></video>
+        <video id="vid_bet" src="bet1.mp4" crossorigin="anonymous"></video>
+        <video id="vid_show_cards" src="hit1.mp4" crossorigin="anonymous"></video>
+        <video id="vid_win" src="win1.mp4" crossorigin="anonymous"></video>
+        <video id="vid_lose" src="loss1.mp4" crossorigin="anonymous"></video>
+      </a-assets>
+
+      <a-videosphere id="main-video" src="#vid_begin"></a-videosphere>
+
+      <a-camera>
+        <a-cursor fuse="true" fuse-timeout="1500" color="yellow"></a-cursor>
+      </a-camera>
+
+      <a-box id="bet-button" position="0 -1 -3" color="green" scale="1 0.5 0.1">
+        <a-text value="STARE TO BET" align="center" position="0 0 0.6" color="white"></a-text>
+      </a-box>
+
+    </a-scene>
+  </body>
+</html>
