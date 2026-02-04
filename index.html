@@ -3,109 +3,60 @@
   <head>
     <title>Flat Screen VR Casino</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-
     <script>
       AFRAME.registerComponent('casino-logic', {
         init: function () {
           const screen = document.querySelector('#main-video');
-          const button = document.querySelector('#action-button');
-          const buttonText = document.querySelector('#button-text');
+          const betBtn = document.querySelector('#bet-button');
 
-          let state = 'bet'; // bet -> hit
-
+          // Helper function to swap video source and play
           const playVideo = (id) => {
-            const video = document.querySelector(id);
+            const videoAsset = document.querySelector(id);
             screen.setAttribute('src', id);
-            video.currentTime = 0;
-            video.play();
+            videoAsset.play();
           };
 
-          button.addEventListener('click', () => {
-            if (state === 'bet') {
-              // BET phase
-              playVideo('#vid_bet');
+          betBtn.addEventListener('click', () => {
+            // 1. Play "Initial Bet"
+            playVideo('#vid_bet');
 
-              document.querySelector('#vid_bet').onended = () => {
-                playVideo('#vid_show_cards');
+            // 2. When "Bet" video ends, show cards
+            document.querySelector('#vid_bet').onended = () => {
+              playVideo('#vid_show_cards');
+            };
 
-                // Switch to HIT mode
-                state = 'hit';
-                button.setAttribute('color', '#e6a700');
-                buttonText.setAttribute('value', 'STARE TO HIT');
-              };
-
-            } else if (state === 'hit') {
-              // HIT phase (random outcome)
+            // 3. When "Show Cards" ends, pick a random outcome
+            document.querySelector('#vid_show_cards').onended = () => {
               const outcomes = ['#vid_win', '#vid_lose'];
-              const result = outcomes[Math.floor(Math.random() * outcomes.length)];
-              playVideo(result);
-
-              // Reset back to BET after outcome
-              document.querySelector(result).onended = () => {
-                playVideo('#vid_begin');
-                state = 'bet';
-                button.setAttribute('color', 'green');
-                buttonText.setAttribute('value', 'STARE TO BET');
-              };
-            }
+              const randomResult = outcomes[Math.floor(Math.random() * outcomes.length)];
+              playVideo(randomResult);
+            };
           });
         }
       });
     </script>
   </head>
-
   <body style="background-color: #000;">
-    <a-scene casino-logic vr-mode-ui="enabled: true">
-
+    <a-scene casino-logic>
       <a-assets>
-        <video id="vid_begin" src="init.mp4" loop crossorigin="anonymous" playsinline></video>
-        <video id="vid_bet" src="bet1.mp4" crossorigin="anonymous" playsinline></video>
-        <video id="vid_show_cards" src="hit1.mp4" crossorigin="anonymous" playsinline></video>
-        <video id="vid_win" src="win1.mp4" crossorigin="anonymous" playsinline></video>
-        <video id="vid_lose" src="loss1.mp4" crossorigin="anonymous" playsinline></video>
+        <video id="vid_begin" src="init.mp4" loop="true" crossorigin="anonymous" playsinline webkit-playsinline></video>
+        <video id="vid_bet" src="bet1.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
+        <video id="vid_show_cards" src="hit1.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
+        <video id="vid_win" src="win1.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
+        <video id="vid_lose" src="loss1.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
       </a-assets>
 
-      <!-- CAMERA (LOCKED, PERFECTLY CENTERED FOR PHONE VR) -->
-      <a-camera
-        position="0 1.6 0"
-        wasd-controls="enabled: false"
-        look-controls="reverseMouseDrag: true">
+      <a-video id="main-video" src="#vid_begin" position="0 1.6 -4" width="4" height="2.25"></a-video>
 
-        <a-cursor
-          fuse="true"
-          fuse-timeout="1200"
-          color="yellow">
-        </a-cursor>
+      <a-plane rotation="-90 0 0" width="10" height="10" color="#111"></a-plane>
 
-        <!-- SCREEN FIXED TO CAMERA -->
-        <a-video
-          id="main-video"
-          src="#vid_begin"
-          position="0 0 -3"
-          width="4"
-          height="2.25">
-        </a-video>
-
-        <!-- SINGLE ACTION BUTTON -->
-        <a-box
-          id="action-button"
-          position="0 -1.1 -2.5"
-          color="green"
-          scale="1.4 0.4 0.1">
-
-          <a-text
-            id="button-text"
-            value="STARE TO BET"
-            align="center"
-            position="0 0 0.6"
-            scale="0.8"
-            color="white">
-          </a-text>
-        </a-box>
-
+      <a-camera>
+        <a-cursor fuse="true" fuse-timeout="1500" color="yellow"></a-cursor>
       </a-camera>
 
-      <a-plane rotation="-90 0 0" width="20" height="20" color="#111"></a-plane>
+      <a-box id="bet-button" position="0 0.5 -3" color="green" scale="1 0.4 0.1">
+        <a-text value="STARE TO BET" align="center" position="0 0 0.6" scale="0.8" color="white"></a-text>
+      </a-box>
 
     </a-scene>
   </body>
