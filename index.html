@@ -75,14 +75,25 @@
         });
 
         // Helper: play video on screen safely
-        function playVideo(video) {
-          video.currentTime = 0;
-          video.play().then(() => {
-            screen.setAttribute('material', 'shader: flat; src', '#' + video.id);
-          }).catch((err) => {
-            console.warn('Video playback blocked:', err);
-          });
-        }
+  function playVideo(video) {
+    // Stop all videos first (important for mobile)
+    [initVid, betVid, hitLoseVid, standVid, standWinVid].forEach(v => {
+      v.pause();
+      v.currentTime = 0;
+    });
+
+    // Update the screen texture FIRST
+    screen.setAttribute('material', {
+      shader: 'flat',
+      src: `#${video.id}`
+    });
+
+    // Then play
+    video.play().catch(err => {
+      console.warn('Video play blocked:', err);
+    });
+  }
+
 
         // Add gaze feedback (scale animation)
         function addGazeFeedback(button) {
