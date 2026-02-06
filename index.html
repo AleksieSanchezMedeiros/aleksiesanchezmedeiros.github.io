@@ -15,6 +15,7 @@
         <video id="hitLoseVid" src="Hit1andPlayerLose.mov" loop="false" playsinline crossorigin="anonymous"></video>
         <video id="standVid" src="Stand1.mov" loop="false" playsinline crossorigin="anonymous"></video>
         <video id="standWinVid" src="PlayerWinAfterStand.mov" loop="false" playsinline crossorigin="anonymous"></video>
+        <video id="dealVid" src="DealCards.mov" loop="false" playsinline crossorigin="anonymous"></video>
       </a-assets>
 
       <!-- Camera with gaze cursor -->
@@ -64,6 +65,7 @@
         const hitLoseVid = document.querySelector('#hitLoseVid');
         const standVid = document.querySelector('#standVid');
         const standWinVid = document.querySelector('#standWinVid');
+        const dealVid = document.querySelector('#dealVid');
 
         const betBtn = document.querySelector('#betButton');
         const hitBtn = document.querySelector('#hitButton');
@@ -77,10 +79,11 @@
         // Helper: play video on screen safely
   function playVideo(video) {
     // Stop all videos first (important for mobile)
-    [initVid, betVid, hitLoseVid, standVid, standWinVid].forEach(v => {
-      v.pause();
-      v.currentTime = 0;
-    });
+    [initVid, betVid, dealVid, hitLoseVid, standVid, standWinVid].forEach(v => {
+  v.pause();
+  v.currentTime = 0;
+});
+
 
     // Update the screen texture FIRST
     screen.setAttribute('material', {
@@ -117,14 +120,23 @@
 
         // BET button
         betBtn.addEventListener('click', () => {
-          playVideo(betVid);
-          betBtn.setAttribute('visible', false);
+  betBtn.setAttribute('visible', false);
 
-          betVid.onended = () => {
-            hitBtn.setAttribute('visible', true);
-            standBtn.setAttribute('visible', true);
-          };
-        });
+  // Play Bet video first
+  playVideo(betVid);
+
+  betVid.onended = () => {
+    // Then play Deal Cards
+    playVideo(dealVid);
+
+    dealVid.onended = () => {
+      // Now player can act
+      hitBtn.setAttribute('visible', true);
+      standBtn.setAttribute('visible', true);
+    };
+  };
+});
+
 
         // HIT button
         hitBtn.addEventListener('click', () => {
