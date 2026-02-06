@@ -3,60 +3,120 @@
   <head>
     <title>Flat Screen VR Casino</title>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script>
-      AFRAME.registerComponent('casino-logic', {
-        init: function () {
-          const screen = document.querySelector('#main-video');
-          const betBtn = document.querySelector('#bet-button');
-
-          // Helper function to swap video source and play
-          const playVideo = (id) => {
-            const videoAsset = document.querySelector(id);
-            screen.setAttribute('src', id);
-            videoAsset.play();
-          };
-
-          betBtn.addEventListener('click', () => {
-            // 1. Play "Initial Bet"
-            playVideo('#vid_bet');
-
-            // 2. When "Bet" video ends, show cards
-            document.querySelector('#vid_bet').onended = () => {
-              playVideo('#vid_show_cards');
-            };
-
-            // 3. When "Show Cards" ends, pick a random outcome
-            document.querySelector('#vid_show_cards').onended = () => {
-              const outcomes = ['#vid_win', '#vid_lose'];
-              const randomResult = outcomes[Math.floor(Math.random() * outcomes.length)];
-              playVideo(randomResult);
-            };
-          });
-        }
-      });
-    </script>
   </head>
-  <body style="background-color: #000;">
-    <a-scene casino-logic>
+
+  <body>
+    <a-scene>
+
+      <!-- Assets -->
       <a-assets>
-        <video id="vid_begin" src="init.mp4" loop="true" crossorigin="anonymous" playsinline webkit-playsinline></video>
-        <video id="vid_bet" src="bet1.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
-        <video id="vid_show_cards" src="hit1.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
-        <video id="vid_win" src="win1.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
-        <video id="vid_lose" src="loss1.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
+        <video id="initVid" src="init.mp4" loop="false"></video>
+        <video id="betVid" src="Bet.mov" loop="false"></video>
+        <video id="hitLoseVid" src="Hit1andPlayerLose.mov" loop="false"></video>
+        <video id="standVid" src="Stand1.mov" loop="false"></video>
+        <video id="standWinVid" src="PlayerWinAfterStand.mov" loop="false"></video>
       </a-assets>
 
-      <a-video id="main-video" src="#vid_begin" position="0 1.6 -4" width="4" height="2.25"></a-video>
+      <!-- Camera (locked) -->
+      <a-entity camera look-controls wasd-controls-enabled="false" position="0 1.6 0">
+        <a-cursor fuse="true" fuse-timeout="1000"
+                  raycaster="objects: .clickable"></a-cursor>
+      </a-entity>
 
-      <a-plane rotation="-90 0 0" width="10" height="10" color="#111"></a-plane>
+      <!-- Video Screen -->
+      <a-plane
+        id="screen"
+        position="0 1.6 -2"
+        width="2.5"
+        height="1.4"
+        material="shader: flat; src: #initVid">
+      </a-plane>
 
-      <a-camera>
-        <a-cursor fuse="true" fuse-timeout="1500" color="yellow"></a-cursor>
-      </a-camera>
-
-      <a-box id="bet-button" position="0 0.5 -3" color="green" scale="1 0.4 0.1">
-        <a-text value="STARE TO BET" align="center" position="0 0 0.6" scale="0.8" color="white"></a-text>
+      <!-- BET Button -->
+      <a-box
+        id="betButton"
+        class="clickable"
+        position="0 0.6 -2"
+        width="0.6"
+        height="0.25"
+        depth="0.05"
+        color="green">
+        <a-text value="BET" align="center" position="0 0 0.03"></a-text>
       </a-box>
+
+      <!-- HIT Button -->
+      <a-box
+        id="hitButton"
+        class="clickable"
+        position="-0.5 0.2 -2"
+        width="0.6"
+        height="0.25"
+        depth="0.05"
+        color="red"
+        visible="false">
+        <a-text value="HIT" align="center" position="0 0 0.03"></a-text>
+      </a-box>
+
+      <!-- STAND Button -->
+      <a-box
+        id="standButton"
+        class="clickable"
+        position="0.5 0.2 -2"
+        width="0.6"
+        height="0.25"
+        depth="0.05"
+        color="blue"
+        visible="false">
+        <a-text value="STAND" align="center" position="0 0 0.03"></a-text>
+      </a-box>
+
+      <!-- Logic -->
+      <script>
+        const screen = document.querySelector('#screen');
+        const betBtn = document.querySelector('#betButton');
+        const hitBtn = document.querySelector('#hitButton');
+        const standBtn = document.querySelector('#standButton');
+
+        const initVid = document.querySelector('#initVid');
+        const betVid = document.querySelector('#betVid');
+        const hitLoseVid = document.querySelector('#hitLoseVid');
+        const standVid = document.querySelector('#standVid');
+        const standWinVid = document.querySelector('#standWinVid');
+
+        initVid.play();
+
+        function playVideo(video) {
+          screen.setAttribute('material', 'shader: flat; src', '#' + video.id);
+          video.currentTime = 0;
+          video.play();
+        }
+
+        betBtn.addEventListener('click', () => {
+          playVideo(betVid);
+          betBtn.setAttribute('visible', false);
+
+          betVid.onended = () => {
+            hitBtn.setAttribute('visible', true);
+            standBtn.setAttribute('visible', true);
+          };
+        });
+
+        hitBtn.addEventListener('click', () => {
+          hitBtn.setAttribute('visible', false);
+          standBtn.setAttribute('visible', false);
+          playVideo(hitLoseVid);
+        });
+
+        standBtn.addEventListener('click', () => {
+          hitBtn.setAttribute('visible', false);
+          standBtn.setAttribute('visible', false);
+          playVideo(standVid);
+
+          standVid.onended = () => {
+            playVideo(standWinVid);
+          };
+        });
+      </script>
 
     </a-scene>
   </body>
