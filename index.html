@@ -69,18 +69,19 @@
         const hitBtn = document.querySelector('#hitButton');
         const standBtn = document.querySelector('#standButton');
 
+        // Play initial video
         initVid.play();
 
+        // Helper: play video on screen
         function playVideo(video) {
           screen.setAttribute('material', 'shader: flat; src', '#' + video.id);
           video.currentTime = 0;
           video.play();
         }
 
-        // Helper: Add gaze feedback animation
+        // Add gaze feedback (visual scale animation)
         function addGazeFeedback(button) {
           button.addEventListener('mouseenter', () => {
-            // Animate scale up
             button.setAttribute('animation__scale', {
               property: 'scale',
               to: '1.2 1.2 1.2',
@@ -88,19 +89,18 @@
               easing: 'linear'
             });
           });
-
           button.addEventListener('mouseleave', () => {
-            // Animate scale back
             button.removeAttribute('animation__scale'); 
             button.setAttribute('scale', '1 1 1');
           });
         }
 
-        // Apply gaze feedback to all buttons
         [betBtn, hitBtn, standBtn].forEach(addGazeFeedback);
 
-        // BET button logic
-        betBtn.addEventListener('mouseenter', () => {
+        // === Button logic using fuse-triggered click ===
+
+        // BET button
+        betBtn.addEventListener('click', () => {
           playVideo(betVid);
           betBtn.setAttribute('visible', false);
 
@@ -110,15 +110,15 @@
           };
         });
 
-        // HIT button logic
-        hitBtn.addEventListener('mouseenter', () => {
+        // HIT button
+        hitBtn.addEventListener('click', () => {
           hitBtn.setAttribute('visible', false);
           standBtn.setAttribute('visible', false);
           playVideo(hitLoseVid);
         });
 
-        // STAND button logic
-        standBtn.addEventListener('mouseenter', () => {
+        // STAND button
+        standBtn.addEventListener('click', () => {
           hitBtn.setAttribute('visible', false);
           standBtn.setAttribute('visible', false);
           playVideo(standVid);
