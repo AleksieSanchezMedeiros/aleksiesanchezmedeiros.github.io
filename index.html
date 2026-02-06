@@ -60,6 +60,7 @@
 
       <!-- Logic -->
       <script>
+        let bgStarted = false;
         const screen = document.querySelector('#screen');
 
         const initVid = document.querySelector('#initVid');
@@ -122,17 +123,21 @@
 
         // BET button
         betBtn.addEventListener('click', () => {
-  betBtn.setAttribute('visible', false);
 
-  // Play Bet video first
+  if (!bgStarted) {
+    const bg = document.querySelector('#bgMusic');
+    bg.volume = 0.6; // nice casino ambience
+    bg.play().catch(() => {});
+    bgStarted = true;
+  }
+
+  betBtn.setAttribute('visible', false);
   playVideo(betVid);
 
   betVid.onended = () => {
-    // Then play Deal Cards
     playVideo(dealVid);
 
     dealVid.onended = () => {
-      // Now player can act
       hitBtn.setAttribute('visible', true);
       standBtn.setAttribute('visible', true);
     };
