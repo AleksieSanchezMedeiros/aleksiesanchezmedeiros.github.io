@@ -109,6 +109,43 @@
 
     <a-plane id="dealerCard3" position="-0.3 2 -1" width="0.25" height="0.35" visible="false"></a-plane>
 
+    <!-- Virtual Casino Scenery -->
+
+    <!-- Walls -->
+    <a-plane position="0 2.5 -5" width="10" height="5" color="#8B4513" rotation="0 0 0"></a-plane> <!-- Back Wall -->
+    <a-plane position="-5 2.5 0" width="10" height="5" color="#8B4513" rotation="0 90 0"></a-plane> <!-- Left Wall -->
+    <a-plane position="5 2.5 0" width="10" height="5" color="#8B4513" rotation="0 -90 0"></a-plane> <!-- Right Wall -->
+    <a-plane position="0 5 0" width="10" height="10" color="#2F1B14" rotation="90 0 0"></a-plane> <!-- Ceiling -->
+
+    <!-- Blackjack Table (Main) -->
+    <a-cylinder position="0 0.5 -2" radius="0.5" height="1" color="#654321"></a-cylinder> <!-- Table Base -->
+    <a-plane position="0 1 -2" width="2" height="1" color="#8B4513" rotation="-90 0 0"></a-plane> <!-- Table Top -->
+
+    <!-- Roulette Table -->
+    <a-cylinder position="-3 0.5 -3" radius="0.6" height="1" color="#228B22"></a-cylinder> <!-- Roulette Base -->
+    <a-plane position="-3 1 -3" width="2.5" height="1.25" color="#228B22" rotation="-90 0 0"></a-plane> <!-- Roulette Top -->
+    <a-cylinder position="-3 1.1 -3" radius="0.4" height="0.05" color="#000000"></a-cylinder> <!-- Roulette Wheel -->
+
+    <!-- Slot Machines -->
+    <a-box position="3 1.5 -2" width="0.5" height="1.5" depth="0.3" color="#FFD700"></a-box> <!-- Slot Machine 1 -->
+    <a-box position="3.8 1.5 -2" width="0.5" height="1.5" depth="0.3" color="#FFD700"></a-box> <!-- Slot Machine 2 -->
+    <a-box position="4.6 1.5 -2" width="0.5" height="1.5" depth="0.3" color="#FFD700"></a-box> <!-- Slot Machine 3 -->
+
+    <!-- Bar Area -->
+    <a-box position="-4 1 -4" width="2" height="0.8" depth="0.5" color="#8B4513"></a-box> <!-- Bar Counter -->
+    <a-cylinder position="-4 1.5 -4" radius="0.1" height="0.5" color="#C0C0C0"></a-cylinder> <!-- Bar Stool 1 -->
+    <a-cylinder position="-3.5 1.5 -4" radius="0.1" height="0.5" color="#C0C0C0"></a-cylinder> <!-- Bar Stool 2 -->
+
+    <!-- Decorative Elements -->
+    <a-cylinder position="4 0.5 -4" radius="0.2" height="2" color="#228B22"></a-cylinder> <!-- Plant 1 -->
+    <a-cylinder position="-4 0.5 -1" radius="0.2" height="2" color="#228B22"></a-cylinder> <!-- Plant 2 -->
+    <a-sphere position="0 4 -3" radius="0.3" color="#FFD700"></a-sphere> <!-- Chandelier -->
+
+    <!-- Lighting -->
+    <a-light type="ambient" color="#ffffff" intensity="0.4"></a-light> <!-- Ambient Light -->
+    <a-light type="directional" position="1 3 1" intensity="0.8" color="#ffff99"></a-light> <!-- Main Directional Light -->
+    <a-light type="point" position="0 4 -3" intensity="0.6" color="#FFD700" distance="15"></a-light> <!-- Chandelier Light -->
+    <a-light type="spot" position="3 3 -2" intensity="0.7" color="#FF4500" angle="45" target="#screen"></a-light> <!-- Slot Area Light -->
 
     <script>
       //Cards
